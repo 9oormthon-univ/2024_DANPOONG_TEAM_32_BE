@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: onchung
+
+  profiles:
+    active: local
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
