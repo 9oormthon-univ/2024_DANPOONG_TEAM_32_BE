@@ -35,3 +35,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+.DS_Store
+
+### applicaiton-auth, prod.yml ###
+/src/**/application-*.yml

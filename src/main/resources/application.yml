@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: onchung
+
+  profiles:
+    active: prod
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+    import:
+      - optional:file:YouthMap_yml/application-local.yml
+      - optional:file:YouthMap_yml/application-common.yml
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+    import:
+      - optional:file:YouthMap_yml/application-prod.yml
+      - optional:file:YouthMap_yml/application-common.yml
