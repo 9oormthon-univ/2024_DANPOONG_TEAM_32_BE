@@ -1,9 +1,7 @@
 package com.danpoong.onchung.domain.public_office.dto;
 
 import lombok.Builder;
-import lombok.Getter;
 
-@Getter
 @Builder
 public record FindAroundPublicOfficeResponse(
         String publicOfficeName,
