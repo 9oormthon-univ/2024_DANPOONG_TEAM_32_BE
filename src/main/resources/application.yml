@@ -3,7 +3,7 @@ spring:
     name: onchung
 
   profiles:
-    active: local, common
+    active: prod, common
 
 ---
 spring:
