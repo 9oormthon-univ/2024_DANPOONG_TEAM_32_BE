@@ -16,6 +16,9 @@ jobs:
     steps:  # 깃허브 레포지토리의 코드 체크아웃
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.FOR_SUBMODULE_TOKEN }}
+          submodules: true
 
       # JDK 17 설치
       - name: Set up JDK 17
@@ -31,12 +34,6 @@ jobs:
       # gradlew 파일에 실행 권한 부여
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-
-      - name: Bring Submodule
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.FOR_SUBMODULE_TOKEN }}
-          submodules: true
 
       # Spring Boot 애플리케이션을 Gradle로 빌드
       - name: Spring Boot Build
