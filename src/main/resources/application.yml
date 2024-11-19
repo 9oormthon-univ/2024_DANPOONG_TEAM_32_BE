@@ -10,9 +10,15 @@ spring:
   config:
     activate:
       on-profile: local
+#    import:
+#      - optional:file:submodules/application-local.yml
+#      - optional:file:submodules/application-common.yml
 
 ---
 spring:
   config:
     activate:
       on-profile: prod
+#    import:
+#      - optional:file:submodules/application-prod.yml
+#      - optional:file:submodules/application-common.yml
