@@ -16,9 +16,6 @@ jobs:
     steps:  # 깃허브 레포지토리의 코드 체크아웃
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.FOR_SUBMODULE_TOKEN }}
-          submodules: true
 
       # JDK 17 설치
       - name: Set up JDK 17
@@ -26,6 +23,12 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+
+      - name: Make application yml files
+        run: |
+          cd ./src/main/resources
+          echo "${{ secrets.APPLICATION_PROD }}" > ./application-prod.yml
+          echo "${{ secrets.APPLICATION_COMMON }}" > ./application-common.yml
 
       # Gradle 설정
       - name: Setup Gradle
