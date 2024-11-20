@@ -19,15 +19,10 @@ public class AddressApiResponse {
         private String x;
         private String y;
 
-        @JsonProperty("road_address")
-        private RoadAddress roadAddress;
+        @JsonProperty("place_name")
+        private String placeName;
 
-        @Getter
-        @NoArgsConstructor
-        @JsonIgnoreProperties(ignoreUnknown = true)
-        public static class RoadAddress {
-            @JsonProperty("address_name")
-            private String addressName;
-        }
+        @JsonProperty("road_address_name")
+        private String roadAddress;
     }
 }

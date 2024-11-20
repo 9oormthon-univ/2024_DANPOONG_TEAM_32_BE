@@ -11,6 +11,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+
 @Component
 @RequiredArgsConstructor
 public class KakaoMap {
@@ -27,11 +30,12 @@ public class KakaoMap {
     private final RestTemplate restTemplate;
 
     // 위도 경도 -> 행정구역
-    public AdminRegionResponse getRoadAddress(String latitude, String longitude) {
-        String url = UriComponentsBuilder.fromHttpUrl(changeAddressUrl)
+    public AdminRegionResponse getAdminDistrict(String longitude, String latitude) {
+        URI url = UriComponentsBuilder.fromHttpUrl(changeAddressUrl)
                 .queryParam("x", longitude)
                 .queryParam("y", latitude)
-                .toUriString();
+                .build()
+                .toUri();
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "KakaoAK "+ kakaoMapApiKey);
@@ -45,10 +49,10 @@ public class KakaoMap {
 
     // 관공서 이름을 통해 도로명 주소, 위도 경도 받기
     public AddressApiResponse getAddress(String search) {
-        String url = UriComponentsBuilder.fromHttpUrl(searchAddressUrl)
+        URI url = UriComponentsBuilder.fromHttpUrl(searchAddressUrl)
                 .queryParam("query", search)
-                .queryParam("analyze_type", "exact")
-                .toUriString();
+                .encode(StandardCharsets.UTF_8)
+                .build().toUri();
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "KakaoAK "+ kakaoMapApiKey);

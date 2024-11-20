@@ -3,10 +3,12 @@ package com.danpoong.onchung.domain.public_office.controller;
 import com.danpoong.onchung.domain.public_office.dto.FindAroundPublicOfficeRequest;
 import com.danpoong.onchung.domain.public_office.dto.FindAroundPublicOfficeResponse;
 import com.danpoong.onchung.domain.public_office.service.PublicOfficeService;
+import com.danpoong.onchung.global.map.api.KakaoMap;
 import com.danpoong.onchung.global.template.ResponseTemplate;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,8 +18,10 @@ import java.util.List;
 @RequestMapping("/api/public-offices")
 @RequiredArgsConstructor
 @Tag(name = "Public Office Controller", description = "Public Office API")
+@Slf4j
 public class PublicOfficeController {
     private final PublicOfficeService publicOfficeService;
+    private final KakaoMap kakaoMap;
 
     @Operation(summary = "근처 관공서 반환")
     @GetMapping("/nearby")

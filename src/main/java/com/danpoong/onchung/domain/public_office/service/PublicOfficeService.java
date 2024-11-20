@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -46,17 +47,21 @@ public class PublicOfficeService {
                         return null;
                     }
 
-                    AddressApiResponse.Document document = addressApiResponse.getDocuments().get(0);
+                    Optional<AddressApiResponse.Document> targetDocument = addressApiResponse.getDocuments().stream()
+                            .filter(document -> publicOffice.getName().equals(document.getPlaceName()))
+                            .findFirst();
 
-                    publicOffice.updateAddress(document.getRoadAddress().getAddressName(), document.getX(), document.getY());
+                    targetDocument.ifPresent(document ->
+                            publicOffice.updateAddress(document.getRoadAddress(), document.getX(), document.getY())
+                    );
 
                     return publicOffice;
                 });
     }
 
 
-    private String[] getStateAndCityFromCoordinate(String latitude, String longitude) {
-        return kakaoMap.getRoadAddress(latitude, longitude).getStateAndCityName();
+    private String[] getStateAndCityFromCoordinate(String longitude, String latitude) {
+        return kakaoMap.getAdminDistrict(longitude, latitude).getStateAndCityName();
     }
 
     private List<PublicOffice> firstFilteringPublicOffice(String state, String city) {
@@ -74,8 +79,8 @@ public class PublicOfficeService {
         return FindAroundPublicOfficeResponse.builder()
                 .publicOfficeName(office.getName())
                 .roadAddress(office.getRoadAddress())
-                .latitude(office.getLatitude())
                 .longitude(office.getLongitude())
+                .latitude(office.getLatitude())
                 .phoneNumber(office.getPhoneNumber())
                 .build();
     }
