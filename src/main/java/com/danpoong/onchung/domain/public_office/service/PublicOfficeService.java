@@ -5,10 +5,12 @@ import com.danpoong.onchung.domain.public_office.dto.FindAroundPublicOfficeReque
 import com.danpoong.onchung.domain.public_office.dto.FindAroundPublicOfficeResponse;
 import com.danpoong.onchung.domain.public_office.repository.PublicOfficeRepository;
 import com.danpoong.onchung.global.map.api.KakaoMap;
+import com.danpoong.onchung.global.map.response.AddressApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -16,28 +18,50 @@ public class PublicOfficeService {
     private final PublicOfficeRepository publicOfficeRepository;
     private final KakaoMap kakaoMap;
 
+    // 띄운 맵의 범위 안 관공서 조회
     public List<FindAroundPublicOfficeResponse> findAroundPublicOffice(FindAroundPublicOfficeRequest request) {
         // 맵 중앙 좌표를 통해 1차 필터링을 위한 도, 시 정보 확보
-        Double[] middlecoordinate = request.middleCoordinate();
-        String[] userStateAndCity = getStateAndCityFromCoordinate(middlecoordinate[0], middlecoordinate[1]);
+        String[] middleCoordinate = request.middleCoordinate();
+        String[] userStateAndCity = getStateAndCityFromCoordinate(middleCoordinate[0], middleCoordinate[1]);
 
         // 1차 필터링
         List<PublicOffice> publicOffices = firstFilteringPublicOffice(userStateAndCity[0], userStateAndCity[1]);
 
         // 범위 안의 관공서만 반환
         return publicOffices.stream()
-                .filter(office -> {
-                    boolean checkLongitude = office.getLongitude() > request.leftBottomLongitude() && office.getLongitude() < request.rightTopLongitude();
-                    boolean checkLatitude = office.getLatitude() > request.leftBottomLatitude() && office.getLatitude() < request.rightTopLatitude();
-
-                    return checkLongitude && checkLatitude;
-                })
+                .filter(office -> Double.parseDouble(office.getLongitude()) > Double.parseDouble(request.leftBottomLongitude()) &&
+                        Double.parseDouble(office.getLongitude()) < Double.parseDouble(request.rightTopLongitude()) &&
+                        Double.parseDouble(office.getLatitude()) > Double.parseDouble(request.leftBottomLatitude()) &&
+                        Double.parseDouble(office.getLatitude()) < Double.parseDouble(request.rightTopLatitude()))
                 .map(this::changeFindAroundPublicOffice)
                 .toList();
     }
 
-    private String[] getStateAndCityFromCoordinate(Double latitude, Double longitude) {
-        return kakaoMap.getRoadAddress(latitude, longitude).getStateAndCityName();
+    // 관공서 주소를 정할 때 사용할 예정 - 데이터 전처리 용도
+    public void saveAddress() {
+        publicOfficeRepository.findAll().stream()
+                .map(publicOffice -> {
+                    AddressApiResponse addressApiResponse = kakaoMap.getAddress(publicOffice.getName());
+
+                    if (addressApiResponse == null || addressApiResponse.getDocuments().isEmpty()) {
+                        return null;
+                    }
+
+                    Optional<AddressApiResponse.Document> targetDocument = addressApiResponse.getDocuments().stream()
+                            .filter(document -> publicOffice.getName().equals(document.getPlaceName()))
+                            .findFirst();
+
+                    targetDocument.ifPresent(document ->
+                            publicOffice.updateAddress(document.getRoadAddress(), document.getX(), document.getY())
+                    );
+
+                    return publicOffice;
+                });
+    }
+
+
+    private String[] getStateAndCityFromCoordinate(String longitude, String latitude) {
+        return kakaoMap.getAdminDistrict(longitude, latitude).getStateAndCityName();
     }
 
     private List<PublicOffice> firstFilteringPublicOffice(String state, String city) {
@@ -55,8 +79,8 @@ public class PublicOfficeService {
         return FindAroundPublicOfficeResponse.builder()
                 .publicOfficeName(office.getName())
                 .roadAddress(office.getRoadAddress())
-                .latitude(office.getLatitude())
                 .longitude(office.getLongitude())
+                .latitude(office.getLatitude())
                 .phoneNumber(office.getPhoneNumber())
                 .build();
     }

@@ -1,16 +1,19 @@
 package com.danpoong.onchung.domain.public_office.dto;
 
 public record FindAroundPublicOfficeRequest(
-        Double leftBottomLatitude, //위도
-        Double leftBottomLongitude, //경도
+        String leftBottomLongitude, //경도
+        String leftBottomLatitude, //위도
 
-        Double rightTopLatitude,
-        Double rightTopLongitude
+        String rightTopLongitude,
+        String rightTopLatitude
 ) {
-    public Double[] middleCoordinate() {
-        return new Double[]{
-                (this.leftBottomLatitude + this.rightTopLatitude) / 2,
-                (this.leftBottomLongitude + this.rightTopLongitude) / 2
+    public String[] middleCoordinate() {
+        double middleLatitude = (Double.parseDouble(this.leftBottomLatitude) + Double.parseDouble(this.rightTopLatitude)) / 2;
+        double middleLongitude = (Double.parseDouble(this.leftBottomLongitude) + Double.parseDouble(this.rightTopLongitude)) / 2;
+
+        return new String[]{
+                String.valueOf(middleLongitude),
+                String.valueOf(middleLatitude)
         };
     }
 }

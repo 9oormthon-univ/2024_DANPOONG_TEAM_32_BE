@@ -7,8 +7,8 @@ public record FindAroundPublicOfficeResponse(
         String publicOfficeName,
         String roadAddress,
 
-        Double latitude, //위도
-        Double longitude, //경도
+        String longitude, //경도
+        String latitude, //위도
 
         String phoneNumber
 ) {
