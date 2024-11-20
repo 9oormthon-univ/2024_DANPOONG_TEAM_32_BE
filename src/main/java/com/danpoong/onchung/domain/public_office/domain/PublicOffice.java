@@ -28,9 +28,9 @@ public class PublicOffice {
     private String roadAddress;
 
     @Column(name = "longitude")
-    private Double longitude;
+    private String longitude;
     @Column(name = "latitude")
-    private Double latitude;
+    private String latitude;
 
     // 관공서 연락처
     @Column(name = "public_office_phone_number")
@@ -42,7 +42,7 @@ public class PublicOffice {
         this.phoneNumber = phoneNumber;
     }
 
-    public void updateAddress(String roadAddress, Double longitude, Double latitude) {
+    public void updateAddress(String roadAddress, String longitude, String latitude) {
         this.roadAddress = roadAddress;
         this.longitude = longitude;
         this.latitude = latitude;

@@ -8,10 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,5 +23,12 @@ public class PublicOfficeController {
     @GetMapping("/nearby")
     public ResponseTemplate<List<FindAroundPublicOfficeResponse>> nearbyPublicOffices(@RequestBody FindAroundPublicOfficeRequest request) {
         return new ResponseTemplate<>(HttpStatus.OK, "근처 관공서 조회 성공", publicOfficeService.findAroundPublicOffice(request));
+    }
+
+    @Operation(summary = "관공서 위치 정보 저장", description = "데이터 전처리 용도로 사용할 것")
+    @PatchMapping("/save-address")
+    public ResponseTemplate<?> publicOfficeSaveAddress() {
+        publicOfficeService.saveAddress();
+        return new ResponseTemplate<>(HttpStatus.OK, "관공서 위치 정보 저장 - 데이터 전처리 용도");
     }
 }

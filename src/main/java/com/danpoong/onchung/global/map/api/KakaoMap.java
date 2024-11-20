@@ -26,8 +26,8 @@ public class KakaoMap {
 
     private final RestTemplate restTemplate;
 
-    // 위도 경도 -> 주소
-    public AdminRegionResponse getRoadAddress(Double latitude, Double longitude) {
+    // 위도 경도 -> 행정구역
+    public AdminRegionResponse getRoadAddress(String latitude, String longitude) {
         String url = UriComponentsBuilder.fromHttpUrl(changeAddressUrl)
                 .queryParam("x", longitude)
                 .queryParam("y", latitude)
