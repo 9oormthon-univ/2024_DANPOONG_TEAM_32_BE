@@ -1,5 +1,8 @@
 package com.danpoong.onchung.domain.public_office.dto;
 
+import lombok.Builder;
+
+@Builder
 public record FindAroundPublicOfficeRequest(
         String leftBottomLongitude, //경도
         String leftBottomLatitude, //위도

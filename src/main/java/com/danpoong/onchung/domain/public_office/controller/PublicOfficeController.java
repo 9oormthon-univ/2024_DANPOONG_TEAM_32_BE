@@ -25,7 +25,19 @@ public class PublicOfficeController {
 
     @Operation(summary = "근처 관공서 반환")
     @GetMapping("/nearby")
-    public ResponseTemplate<List<FindAroundPublicOfficeResponse>> nearbyPublicOffices(@RequestBody FindAroundPublicOfficeRequest request) {
+    public ResponseTemplate<List<FindAroundPublicOfficeResponse>> nearbyPublicOffices(
+            @RequestParam String leftBottomLongitude,
+            @RequestParam String leftBottomLatitude,
+            @RequestParam String rightTopLongitude,
+            @RequestParam String rightTopLatitude
+    ) {
+        FindAroundPublicOfficeRequest request = FindAroundPublicOfficeRequest.builder()
+                .leftBottomLongitude(leftBottomLongitude)
+                .leftBottomLatitude(leftBottomLatitude)
+                .rightTopLongitude(rightTopLongitude)
+                .rightTopLatitude(rightTopLatitude)
+                .build();
+
         return new ResponseTemplate<>(HttpStatus.OK, "근처 관공서 조회 성공", publicOfficeService.findAroundPublicOffice(request));
     }
 
