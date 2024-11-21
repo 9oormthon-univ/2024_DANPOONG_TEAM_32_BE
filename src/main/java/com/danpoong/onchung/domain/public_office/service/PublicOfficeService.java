@@ -7,7 +7,6 @@ import com.danpoong.onchung.domain.public_office.repository.PublicOfficeReposito
 import com.danpoong.onchung.global.map.api.KakaoMap;
 import com.danpoong.onchung.global.map.response.AddressApiResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +15,6 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 @Transactional(readOnly = true)
 public class PublicOfficeService {
     private final PublicOfficeRepository publicOfficeRepository;
@@ -48,10 +46,8 @@ public class PublicOfficeService {
 
         publicOffices.forEach(publicOffice -> {
             AddressApiResponse addressApiResponse = kakaoMap.getAddress(publicOffice.getName());
-            log.info(addressApiResponse.getDocuments().toString());
 
             if (addressApiResponse == null || addressApiResponse.getDocuments().isEmpty()) {
-                log.info("정보가 존재하지 않습니다. 공공기관: " + publicOffice.getName());
                 return;
             }
 
