@@ -3,11 +3,14 @@ package com.danpoong.onchung.global.map.response;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Slf4j
 public class AdminRegionResponse {
     @JsonProperty("documents")
     private List<KakaoDocument> documents;
@@ -25,11 +28,13 @@ public class AdminRegionResponse {
 
         if (kakaoDocument != null && kakaoDocument.addressName != null) {
             String[] splitAddress = kakaoDocument.getAddressName().split(" ");
+            log.info(Arrays.toString(splitAddress));
+
 
             if (splitAddress[1].endsWith("시")) {
-                return new String[]{splitAddress[0], null};
-            } else {
                 return new String[]{splitAddress[0], splitAddress[1]};
+            } else {
+                return new String[]{splitAddress[0], ""};
             }
         }
 
