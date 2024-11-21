@@ -1,7 +1,7 @@
 package com.danpoong.onchung.global.map.api;
 
-import com.danpoong.onchung.global.map.response.AddressApiResponse;
-import com.danpoong.onchung.global.map.response.AdminRegionResponse;
+import com.danpoong.onchung.global.map.response.AddressApiResponseDto;
+import com.danpoong.onchung.global.map.response.AdminRegionResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -30,7 +30,7 @@ public class KakaoMap {
     private final RestTemplate restTemplate;
 
     // 위도 경도 -> 행정구역
-    public AdminRegionResponse getAdminDistrict(String longitude, String latitude) {
+    public AdminRegionResponseDto getAdminDistrict(String longitude, String latitude) {
         URI url = UriComponentsBuilder.fromHttpUrl(changeAddressUrl)
                 .queryParam("x", longitude)
                 .queryParam("y", latitude)
@@ -43,12 +43,12 @@ public class KakaoMap {
         HttpEntity<?> entity = new HttpEntity<>(headers);
 
         return restTemplate
-                .exchange(url, HttpMethod.GET, entity, AdminRegionResponse.class)
+                .exchange(url, HttpMethod.GET, entity, AdminRegionResponseDto.class)
                 .getBody();
     }
 
     // 관공서 이름을 통해 도로명 주소, 위도 경도 받기
-    public AddressApiResponse getAddress(String search) {
+    public AddressApiResponseDto getAddress(String search) {
         URI url = UriComponentsBuilder.fromHttpUrl(searchAddressUrl)
                 .queryParam("query", search)
                 .encode(StandardCharsets.UTF_8)
@@ -60,7 +60,7 @@ public class KakaoMap {
         HttpEntity<?> entity = new HttpEntity<>(headers);
 
         return restTemplate
-                .exchange(url, HttpMethod.GET, entity, AddressApiResponse.class)
+                .exchange(url, HttpMethod.GET, entity, AddressApiResponseDto.class)
                 .getBody();
     }
 }

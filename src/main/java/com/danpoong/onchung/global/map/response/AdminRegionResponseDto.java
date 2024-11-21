@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Slf4j
-public class AdminRegionResponse {
+public class AdminRegionResponseDto {
     @JsonProperty("documents")
     private List<KakaoDocument> documents;
 
