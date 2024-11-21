@@ -41,10 +41,10 @@ public class PublicOfficeController {
         return new ResponseTemplate<>(HttpStatus.OK, "근처 관공서 조회 성공", publicOfficeService.findAroundPublicOffice(request));
     }
 
-    @Operation(summary = "관공서 위치 정보 저장", description = "데이터 전처리 용도로 사용할 것")
-    @PatchMapping("/save-address")
-    public ResponseTemplate<?> publicOfficeSaveAddress() {
-        publicOfficeService.saveAddress();
-        return new ResponseTemplate<>(HttpStatus.OK, "관공서 위치 정보 저장 - 데이터 전처리 용도");
-    }
+//    @Operation(summary = "관공서 위치 정보 저장", description = "데이터 전처리 용도로 사용할 것")
+//    @PatchMapping("/save-address")
+//    public ResponseTemplate<?> publicOfficeSaveAddress() {
+//        publicOfficeService.saveAddress();
+//        return new ResponseTemplate<>(HttpStatus.OK, "관공서 위치 정보 저장 - 데이터 전처리 용도");
+//    }
 }

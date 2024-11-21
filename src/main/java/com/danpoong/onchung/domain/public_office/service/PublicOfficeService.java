@@ -8,12 +8,14 @@ import com.danpoong.onchung.global.map.api.KakaoMap;
 import com.danpoong.onchung.global.map.response.AddressApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class PublicOfficeService {
     private final PublicOfficeRepository publicOfficeRepository;
     private final KakaoMap kakaoMap;
@@ -38,26 +40,27 @@ public class PublicOfficeService {
     }
 
     // 관공서 주소를 정할 때 사용할 예정 - 데이터 전처리 용도
+    @Transactional
     public void saveAddress() {
-        publicOfficeRepository.findAll().stream()
-                .map(publicOffice -> {
-                    AddressApiResponse addressApiResponse = kakaoMap.getAddress(publicOffice.getName());
+        List<PublicOffice> publicOffices = publicOfficeRepository.findAll();
 
-                    if (addressApiResponse == null || addressApiResponse.getDocuments().isEmpty()) {
-                        return null;
-                    }
+        publicOffices.forEach(publicOffice -> {
+            AddressApiResponse addressApiResponse = kakaoMap.getAddress(publicOffice.getName());
 
-                    Optional<AddressApiResponse.Document> targetDocument = addressApiResponse.getDocuments().stream()
-                            .filter(document -> publicOffice.getName().equals(document.getPlaceName()))
-                            .findFirst();
+            if (addressApiResponse == null || addressApiResponse.getDocuments().isEmpty()) {
+                return;
+            }
 
-                    targetDocument.ifPresent(document ->
-                            publicOffice.updateInfo(document.getRoadAddress(), document.getX(), document.getY(), document.getPhone())
-                    );
+            Optional<AddressApiResponse.Document> targetDocument = addressApiResponse.getDocuments()
+                    .stream()
+                    .findFirst();
 
-                    return publicOffice;
-                });
+            targetDocument.ifPresent(document ->
+                    publicOffice.updateInfo(document.getRoadAddress(), document.getX(), document.getY(), document.getPhone())
+            );
+        });
     }
+
 
 
     private String[] getStateAndCityFromCoordinate(String longitude, String latitude) {
