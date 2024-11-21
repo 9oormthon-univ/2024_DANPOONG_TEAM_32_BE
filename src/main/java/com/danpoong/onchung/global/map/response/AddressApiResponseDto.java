@@ -9,7 +9,7 @@ import java.util.List;
 
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class AddressApiResponse {
+public class AddressApiResponseDto {
     private List<Document> documents;
 
     @Getter
