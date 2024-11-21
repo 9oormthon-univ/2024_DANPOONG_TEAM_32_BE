@@ -1,11 +1,9 @@
 package com.danpoong.onchung.domain.policy.dto;
 
 import lombok.Builder;
-import lombok.Getter;
 
 import java.util.List;
 
-@Getter
 @Builder
 public record PolicyResponseDto(
         Long policyId,
