@@ -21,6 +21,8 @@ configurations {
 
 repositories {
 	mavenCentral()
+	maven {url 'https://repo.spring.io/milestone'}
+	maven {url 'https://repo.spring.io/snapshot'}
 }
 
 dependencies {
@@ -51,6 +53,14 @@ dependencies {
 	implementation 'com.opencsv:opencsv:5.5.2'
 	implementation 'org.apache.poi:poi:5.2.2'
 	implementation 'org.apache.poi:poi-ooxml:5.2.2'
+
+	// open ai
+	implementation 'org.springframework.ai:spring-ai-openai-spring-boot-starter:1.0.0-SNAPSHOT'
+	implementation 'org.springframework.ai:spring-ai-bom:1.0.0-SNAPSHOT'
+
+	// apache POI
+	implementation 'org.apache.poi:poi-ooxml:5.2.3'
+	implementation 'org.apache.poi:poi:5.2.3'
 }
 
 tasks.named('test') {
