@@ -52,7 +52,7 @@ public class PublicOfficeService {
                             .findFirst();
 
                     targetDocument.ifPresent(document ->
-                            publicOffice.updateAddress(document.getRoadAddress(), document.getX(), document.getY())
+                            publicOffice.updateInfo(document.getRoadAddress(), document.getX(), document.getY(), document.getPhone())
                     );
 
                     return publicOffice;

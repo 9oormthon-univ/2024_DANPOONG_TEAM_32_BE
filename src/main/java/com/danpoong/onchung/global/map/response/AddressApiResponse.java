@@ -24,5 +24,7 @@ public class AddressApiResponse {
 
         @JsonProperty("road_address_name")
         private String roadAddress;
+
+        private String phone;
     }
 }
