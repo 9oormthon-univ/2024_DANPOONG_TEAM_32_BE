@@ -1,9 +1,13 @@
 package com.danpoong.onchung.domain.public_office.domain;
 
+import com.danpoong.onchung.domain.policy.domain.Policy;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -36,16 +40,19 @@ public class PublicOffice {
     @Column(name = "public_office_phone_number")
     private String phoneNumber;
 
+    @ManyToMany(mappedBy = "publicOffices")  // 반대 방향 설정
+    private List<Policy> policies = new ArrayList<>();
+
     @Builder
-    public PublicOffice(String name, String phoneNumber) {
+    public PublicOffice(String name) {
         this.name = name;
-        this.phoneNumber = phoneNumber;
     }
 
-    public void updateAddress(String roadAddress, String longitude, String latitude) {
+    public void updateInfo(String roadAddress, String longitude, String latitude, String phoneNumber) {
         this.roadAddress = roadAddress;
         this.longitude = longitude;
         this.latitude = latitude;
+        this.phoneNumber = phoneNumber;
 
         splitAddress(roadAddress);
     }
