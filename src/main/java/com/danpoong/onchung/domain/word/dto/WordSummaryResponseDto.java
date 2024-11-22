@@ -9,4 +9,7 @@ public record WordSummaryResponseDto(
         Boolean isBookmark,
         String relatedWelfare
 ) {
+    public static WordSummaryResponseDto empty() {
+        return new WordSummaryResponseDto(null, "", false, "");
+    }
 }

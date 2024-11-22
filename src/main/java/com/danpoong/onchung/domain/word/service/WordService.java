@@ -93,4 +93,65 @@ public class WordService {
                 .build()
         );
     }
+
+    public WordSummaryResponseDto searchWord(Long userId, String type, String term) {
+        UserInfo userInfo = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("해당 ID의 사용자가 존재하지 않습니다."));
+
+        Word word = wordRepository.findByTerm(term).orElse(null);
+        if (word == null) {
+            return WordSummaryResponseDto.empty();
+        }
+
+        // 북마크 검색
+        if (type.equals("북마크")) {
+            return searchBookmark(userInfo, word);
+        }
+
+        // 전체 검색
+        if (type.isEmpty()) {
+            return searchAll(userInfo, word);
+        }
+
+        // 카테고리 검색
+        return searchByCategory(userInfo, type, word);
+    }
+
+    // 북마크 내 검색
+    private WordSummaryResponseDto searchBookmark(UserInfo userInfo, Word word) {
+        for (Word favoriteWord : userInfo.getFavoriteWords()) {
+            if (favoriteWord.getTerm().equals(word.getTerm())) {
+                return createWordSummaryResponse(favoriteWord, true);
+            }
+        }
+        return WordSummaryResponseDto.empty();
+    }
+
+    // 전체 검색
+    private WordSummaryResponseDto searchAll(UserInfo userInfo, Word word) {
+        boolean isBookmark = userInfo.getFavoriteWords().contains(word);
+        return createWordSummaryResponse(word, isBookmark);
+    }
+
+    // 카테고리 내 검색
+    private WordSummaryResponseDto searchByCategory(UserInfo userInfo, String type, Word word) {
+        WordCategory wordCategoryEng = WordCategory.checkCategory(type);
+        List<Word> wordList = wordRepository.findAllByCategory(wordCategoryEng);
+
+        if (wordList.contains(word) && userInfo.getFavoriteWords().contains(word)) {
+            return createWordSummaryResponse(word, true);
+        }
+
+        return WordSummaryResponseDto.empty();
+    }
+
+    // 응답 객체 생성
+    private WordSummaryResponseDto createWordSummaryResponse(Word word, boolean isBookmark) {
+        return WordSummaryResponseDto.builder()
+                .wordId(word.getId())
+                .term(word.getTerm())
+                .isBookmark(isBookmark)
+                .relatedWelfare(word.getRelatedWelfare())
+                .build();
+    }
 }

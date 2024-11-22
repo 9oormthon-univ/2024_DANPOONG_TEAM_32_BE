@@ -53,4 +53,14 @@ public class WordController {
     ) {
         return new ResponseTemplate<>(HttpStatus.OK, "북마크 단어 조회 성공", wordService.getBookmarkedWords(userId, pageNum));
     }
+
+    @Operation(summary = "단어 검색", description = "type에는 카테고리 종류 중 하나 / 공백 / 북마크 중 하나가 들어갈 수 있다.")
+    @GetMapping("/search")
+    public ResponseTemplate<WordSummaryResponseDto> searchWord(
+            @AuthenticationPrincipal Long userId,
+            @RequestParam String type,
+            @RequestParam String word
+    ) {
+        return new ResponseTemplate<>(HttpStatus.OK, "용어 검색 성공", wordService.searchWord(userId, type, word));
+    }
 }
