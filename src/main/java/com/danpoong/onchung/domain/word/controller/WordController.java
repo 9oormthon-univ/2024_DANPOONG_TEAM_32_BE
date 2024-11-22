@@ -17,7 +17,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Word Controller", description = "Find By Category")
-@RequestMapping("/word")
+@RequestMapping("/api/word")
 public class WordController {
     private final WordService wordService;
 
