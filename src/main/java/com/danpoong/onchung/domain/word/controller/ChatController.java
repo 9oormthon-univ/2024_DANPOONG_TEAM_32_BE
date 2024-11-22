@@ -1,7 +1,6 @@
-package com.danpoong.onchung.domain.chat_gpt.controller;
+package com.danpoong.onchung.domain.word.controller;
 
-import com.danpoong.onchung.domain.chat_gpt.service.ChatService;
-import org.springframework.ai.chat.client.ChatClient;
+import com.danpoong.onchung.domain.word.service.ChatService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 

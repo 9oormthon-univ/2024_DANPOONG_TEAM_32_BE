@@ -1,7 +1,7 @@
-package com.danpoong.onchung.domain.chat_gpt.service;
+package com.danpoong.onchung.domain.word.service;
 
-import com.danpoong.onchung.domain.chat_gpt.domain.Word;
-import com.danpoong.onchung.domain.chat_gpt.repository.WordRepository;
+import com.danpoong.onchung.domain.word.domain.Word;
+import com.danpoong.onchung.domain.word.repository.WordRepository;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -13,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class ChatService {
@@ -32,7 +31,7 @@ public class ChatService {
 
         // 데이터 읽기 및 카테고리별 용어 분류
         for (Row row : sheet) {
-            if (row.getRowNum() == 0) continue; // 첫 번째 행은 헤더로 간주
+            if (row.getRowNum() == 0) continue; // 첫 번째 행 제외
 
             Cell categoryCell = row.getCell(0); // 첫 번째 열: 카테고리
             Cell termCell = row.getCell(1); // 두 번째 열: 용어
@@ -42,7 +41,7 @@ public class ChatService {
                 String term = termCell.getStringCellValue();
 
                 // OpenAI 호출로 요약, 예시, 관련 복지 정보 생성
-                String prompt = "용어 '" + term + "'에 대해 3문장 이내로 요약하고, 예시와 관련 복지 정보를 제공해주세요.";
+                String prompt = "용어 '" + term + "'에 대해 고등학생도 이해할 수 있는 수준으로 3줄 이내로 설명해주고, 예시를 들고 줄바꿈을 하고 관련 복지 정보를 제공해주세요.";
                 String response = openAiChatModel.call(prompt);
 
                 // 응답을 파싱하여 요약, 예시, 관련 복지 정보 추출

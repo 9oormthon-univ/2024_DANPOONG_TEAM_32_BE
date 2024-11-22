@@ -1,6 +1,6 @@
-package com.danpoong.onchung.domain.chat_gpt.repository;
+package com.danpoong.onchung.domain.word.repository;
 
-import com.danpoong.onchung.domain.chat_gpt.domain.Word;
+import com.danpoong.onchung.domain.word.domain.Word;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
