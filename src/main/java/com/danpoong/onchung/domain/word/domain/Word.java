@@ -1,31 +1,33 @@
-package com.danpoong.onchung.domain.chat_gpt.domain;
+package com.danpoong.onchung.domain.word.domain;
 
 import jakarta.persistence.*;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter
+
 @Entity
+@Getter
 @Table(name = "word")
 public class Word {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(name = "term")
     private String term;
 
-    @Column
+    @Column(name = "category")
     private String category;
 
-    @Column
+    @Column(name = "description")
     private String description;
 
-    @Column
+    @Column(name = "example")
     private String example;
 
-    @Column
+    @Column(name = "relatedWelfare")
     private String relatedWelfare;
 
     public Word() {
