@@ -3,9 +3,11 @@ package com.danpoong.onchung.domain.word.domain;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor
 @Table(name = "favoriteWord")
 public class FavoriteWord {
     @Id
@@ -17,8 +19,6 @@ public class FavoriteWord {
 
     @Column
     private Long wordId;
-
-    public FavoriteWord() {}
 
     @Builder
     public FavoriteWord(Long userId, Long wordId) {
