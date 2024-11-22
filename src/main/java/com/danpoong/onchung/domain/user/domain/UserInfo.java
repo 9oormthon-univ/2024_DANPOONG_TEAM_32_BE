@@ -1,7 +1,9 @@
 package com.danpoong.onchung.domain.user.domain;
 
 import com.danpoong.onchung.domain.policy.domain.Policy;
+import com.danpoong.onchung.domain.public_office.domain.PublicOffice;
 import com.danpoong.onchung.domain.welfare_card.domain.enums.WelfareCard;
+import com.danpoong.onchung.global.security.jwt.domain.Token;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,6 +31,10 @@ public class UserInfo {
     @Column(name = "welfare_card")
     private WelfareCard welfareCard;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "recent_public_office_id")
+    private PublicOffice recentPublicOffice;
+
     @ManyToMany
     @JoinTable(
             name = "user_favorite_policy",
@@ -37,10 +43,17 @@ public class UserInfo {
     )
     private List<Policy> favoritePolicies = new ArrayList<>();
 
+    @OneToOne(mappedBy = "userInfo", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Token token;
+
     @Builder
-    public UserInfo(String userName, String userLoginId, WelfareCard welfareCard) {
+    public UserInfo(String userName, String userLoginId, Token token) {
         this.userName = userName;
         this.userLoginId = userLoginId;
+        this.token = token;
+    }
+
+    public void updateWelfareCard(WelfareCard welfareCard) {
         this.welfareCard = welfareCard;
     }
 
@@ -49,5 +62,12 @@ public class UserInfo {
     }
     public void removeFavoritePolicy(Policy policy) {
         favoritePolicies.remove(policy);
+    }
+
+    // 관공서 재설정에서 사용
+    public void updateRecentPublicOffice(PublicOffice recentPublicOffice) {
+        if (this.recentPublicOffice.equals(recentPublicOffice)) {
+            this.recentPublicOffice = recentPublicOffice;
+        }
     }
 }
