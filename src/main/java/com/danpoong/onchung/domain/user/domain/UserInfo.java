@@ -52,6 +52,10 @@ public class UserInfo {
     )
     private List<Word> favoriteWords = new ArrayList<>();
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_detail_id")
+    private UserDetail userDetail;
+
     @OneToOne(mappedBy = "userInfo", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Token token;
 
@@ -60,6 +64,10 @@ public class UserInfo {
         this.userName = userName;
         this.userLoginId = userLoginId;
         this.token = token;
+    }
+
+    public void updateUserDetail(UserDetail userDetail) {
+        this.userDetail = userDetail;
     }
 
     public void updateWelfareCard(WelfareCard welfareCard) {
