@@ -26,18 +26,18 @@ public class WordService {
 
     private static final int WORD_PAGE_SIZE = 10;
 
-    public Page<WordSummaryResponseDto> getWordsByCategory(Long userId, String category, int page) {
+    public Page<WordSummaryResponseDto> getWordsByCategory(String category, int page) {
         Page<Word> words = wordRepository.findByCategory(WordCategory.checkCategory(category), PageRequest.of(page, WORD_PAGE_SIZE));
 
         return words.map(word -> {
             boolean isBookmarked = false;
 
-            if (userId != null) {
-                UserInfo userInfo = userRepository.findById(userId)
-                        .orElseThrow(() -> new RuntimeException("해당 ID의 사용자가 존재하지 않습니다."));
-
-                isBookmarked = userInfo.getFavoriteWords().contains(word);
-            }
+//            if (userId != null) {
+//                UserInfo userInfo = userRepository.findById(userId)
+//                        .orElseThrow(() -> new RuntimeException("해당 ID의 사용자가 존재하지 않습니다."));
+//
+//                isBookmarked = userInfo.getFavoriteWords().contains(word);
+//            }
 
             return WordSummaryResponseDto.builder()
                     .wordId(word.getId())
@@ -94,27 +94,27 @@ public class WordService {
         );
     }
 
-    public WordSummaryResponseDto searchWord(Long userId, String type, String term) {
-        UserInfo userInfo = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("해당 ID의 사용자가 존재하지 않습니다."));
+    public WordSummaryResponseDto searchWord(String type, String term) {
+//        UserInfo userInfo = userRepository.findById(userId)
+//                .orElseThrow(() -> new RuntimeException("해당 ID의 사용자가 존재하지 않습니다."));
 
         Word word = wordRepository.findByTerm(term).orElse(null);
         if (word == null) {
             return WordSummaryResponseDto.empty();
         }
 
-        // 북마크 검색
-        if (type.equals("북마크")) {
-            return searchBookmark(userInfo, word);
-        }
-
+//        // 북마크 검색
+//        if (type.equals("북마크")) {
+//            return searchBookmark(userInfo, word);
+//        }
+//
         // 전체 검색
         if (type.isEmpty()) {
-            return searchAll(userInfo, word);
+            return searchAll(word);
         }
 
         // 카테고리 검색
-        return searchByCategory(userInfo, type, word);
+        return searchByCategory(type, word);
     }
 
     // 북마크 내 검색
@@ -128,21 +128,27 @@ public class WordService {
     }
 
     // 전체 검색
-    private WordSummaryResponseDto searchAll(UserInfo userInfo, Word word) {
-        boolean isBookmark = userInfo.getFavoriteWords().contains(word);
-        return createWordSummaryResponse(word, isBookmark);
+    private WordSummaryResponseDto searchAll(Word word) {
+//        boolean isBookmark = userInfo.getFavoriteWords().contains(word);
+        return createWordSummaryResponse(word, false);
     }
 
     // 카테고리 내 검색
-    private WordSummaryResponseDto searchByCategory(UserInfo userInfo, String type, Word word) {
+    private WordSummaryResponseDto searchByCategory(String type, Word word) {
         WordCategory wordCategoryEng = WordCategory.checkCategory(type);
         List<Word> wordList = wordRepository.findAllByCategory(wordCategoryEng);
 
-        if (wordList.contains(word) && userInfo.getFavoriteWords().contains(word)) {
-            return createWordSummaryResponse(word, true);
+        if (wordList.contains(word)) {
+            return createWordSummaryResponse(word, false);
         }
 
         return WordSummaryResponseDto.empty();
+
+//        if (wordList.contains(word) && userInfo.getFavoriteWords().contains(word)) {
+//            return createWordSummaryResponse(word, true);
+//        }
+//
+//        return WordSummaryResponseDto.empty();
     }
 
     // 응답 객체 생성

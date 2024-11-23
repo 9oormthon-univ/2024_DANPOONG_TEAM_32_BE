@@ -4,9 +4,7 @@ import com.danpoong.onchung.domain.policy.domain.Policy;
 import com.danpoong.onchung.domain.policy.dto.PolicyResponseDto;
 import com.danpoong.onchung.domain.policy.repository.PolicyRepository;
 import com.danpoong.onchung.domain.public_office.domain.PublicOffice;
-import com.danpoong.onchung.domain.user.domain.UserInfo;
 import com.danpoong.onchung.domain.user.repository.UserRepository;
-import com.danpoong.onchung.global.security.util.CookieUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -29,12 +27,12 @@ public class PolicyService {
     public PolicyResponseDto getPolicy(Long policyId, HttpServletRequest request, HttpServletResponse response) {
         Policy policy = policyRepository.findById(policyId).orElseThrow(() -> new RuntimeException("해당 ID의 정책이 존재하지 않습니다."));
 
-        List<Long> recentPolicyList = CookieUtil.getLongListFromCookie(request, RECENT_POLICY_COOKIE_NAME);
+//        List<Long> recentPolicyList = CookieUtil.getLongListFromCookie(request, RECENT_POLICY_COOKIE_NAME);
 
-        if (recentPolicyList == null) {
-            recentPolicyList = new ArrayList<>();
-        }
-        CookieUtil.setLongListCookie(response, RECENT_POLICY_COOKIE_NAME, recentPolicyList, COOKIE_EXPIRE_SECONDS);
+//        if (recentPolicyList == null) {
+//            recentPolicyList = new ArrayList<>();
+//        }
+//        CookieUtil.setLongListCookie(response, RECENT_POLICY_COOKIE_NAME, recentPolicyList, COOKIE_EXPIRE_SECONDS);
 
         return PolicyResponseDto.builder()
                 .policyId(policy.getId())
@@ -53,20 +51,20 @@ public class PolicyService {
                 .build();
     }
 
-    @Transactional
-    public void favoritePolicy(Long userId, Long policyId) {
-        UserInfo userInfo = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
-
-        Policy policy = policyRepository.findById(policyId).orElseThrow(() -> new RuntimeException("해당 ID의 정책이 존재하지 않습니다."));
-
-        boolean isPresent = userInfo.getFavoritePolicies().contains(policy);
-
-        if (!isPresent) {
-            userInfo.addFavoritePolicy(policy);
-        } else {
-            userInfo.removeFavoritePolicy(policy);
-        }
-    }
+//    @Transactional
+//    public void favoritePolicy(Long userId, Long policyId) {
+//        UserInfo userInfo = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
+//
+//        Policy policy = policyRepository.findById(policyId).orElseThrow(() -> new RuntimeException("해당 ID의 정책이 존재하지 않습니다."));
+//
+//        boolean isPresent = userInfo.getFavoritePolicies().contains(policy);
+//
+//        if (!isPresent) {
+//            userInfo.addFavoritePolicy(policy);
+//        } else {
+//            userInfo.removeFavoritePolicy(policy);
+//        }
+//    }
 
     private List<String> getPublicOfficeName(List<PublicOffice> publicOffices) {
         List<String> publicOfficeNames = new ArrayList<>();
