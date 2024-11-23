@@ -3,6 +3,7 @@ package com.danpoong.onchung.domain.user.domain;
 import com.danpoong.onchung.domain.policy.domain.Policy;
 import com.danpoong.onchung.domain.public_office.domain.PublicOffice;
 import com.danpoong.onchung.domain.welfare_card.domain.enums.WelfareCard;
+import com.danpoong.onchung.domain.word.domain.Word;
 import com.danpoong.onchung.global.security.jwt.domain.Token;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -43,6 +44,14 @@ public class UserInfo {
     )
     private List<Policy> favoritePolicies = new ArrayList<>();
 
+    @ManyToMany
+    @JoinTable(
+            name = "user_favorite_word",
+            joinColumns = @JoinColumn(name = "user_info_id"),
+            inverseJoinColumns = @JoinColumn(name = "word_id")
+    )
+    private List<Word> favoriteWords = new ArrayList<>();
+
     @OneToOne(mappedBy = "userInfo", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Token token;
 
@@ -62,6 +71,13 @@ public class UserInfo {
     }
     public void removeFavoritePolicy(Policy policy) {
         favoritePolicies.remove(policy);
+    }
+
+    public void addFavoriteWord(Word word) {
+        favoriteWords.add(word);
+    }
+    public void removeFavoriteWord(Word word) {
+        favoriteWords.remove(word);
     }
 
     // 관공서 재설정에서 사용
