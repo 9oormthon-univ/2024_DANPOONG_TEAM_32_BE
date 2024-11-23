@@ -1,27 +1,20 @@
 package com.danpoong.onchung.domain.word.domain.enums;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 @Getter
+@Slf4j
 public enum WordCategory {
-    PUBLIC("공공"),
-    FINANCE("금융"),
-    ECONOMY("경제"),
-    SOCIETY("사회");
+    공공,
+    금융,
+    경제,
+    사회;
 
-    private final String korean;
-
-    WordCategory(String korean) {
-        this.korean = korean;
-    }
-
-    public String getKorean() {
-        return korean;
-    }
-
-    public static WordCategory checkCategory(String korean) {
+    public static WordCategory checkCategory(String input) {
         for (WordCategory category : WordCategory.values()) {
-            if (category.getKorean().equalsIgnoreCase(korean)) {
+            if (category.name().equals(input)) {
+                log.info(category.name());
                 return category;
             }
         }
@@ -31,6 +24,6 @@ public enum WordCategory {
 
     @Override
     public String toString() {
-        return korean;
+        return name();
     }
 }
