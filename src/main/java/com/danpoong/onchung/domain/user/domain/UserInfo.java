@@ -9,6 +9,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @Getter
+@ToString
 public class UserInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,9 +62,12 @@ public class UserInfo {
     private Token token;
 
     @Builder
-    public UserInfo(String userName, String userLoginId, Token token) {
+    public UserInfo(String userName, String userLoginId) {
         this.userName = userName;
         this.userLoginId = userLoginId;
+    }
+
+    public void updateToken(Token token) {
         this.token = token;
     }
 
