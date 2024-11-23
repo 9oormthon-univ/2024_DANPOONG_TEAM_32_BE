@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum PolicyCategory {
-    Employment("23010"), // (일자리 분야)
+    Employment("23010"), // 일자리 분야
     Housing("23020"), // 주거 분야
     Education("23030"), //교육 분야
     WelfareCulture("23040"), // 복지, 문화 분야
