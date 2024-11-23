@@ -1,6 +1,6 @@
 package com.danpoong.onchung.global.security.jwt.domain;
 
-import com.danpoong.onchung.domain.user.domain.UserInfo;
+//import com.danpoong.onchung.domain.user.domain.UserInfo;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,9 +18,9 @@ public class Token {
     @Column(name = "refresh_token")
     private String refreshToken;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_info_id")
-    private UserInfo userInfo;
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "user_info_id")
+//    private UserInfo userInfo;
 
     @Builder
     public Token(String refreshToken) {

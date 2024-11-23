@@ -5,15 +5,12 @@ import com.danpoong.onchung.domain.policy.domain.Policy;
 import com.danpoong.onchung.domain.policy.repository.PolicyRepository;
 import com.danpoong.onchung.domain.public_office.domain.PublicOffice;
 import com.danpoong.onchung.domain.public_office.repository.PublicOfficeRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,41 +21,41 @@ public class CsvService {
     private final PolicyRepository policyRepository;
     private final PublicOfficeRepository publicOfficeRepository;
 
-    @Transactional
-    public void loadDataFromCSV(MultipartFile file) {
-        List<Policy> policyList = new ArrayList<>();
-
-        try (InputStream inputStream = file.getInputStream();
-             Workbook workbook = WorkbookFactory.create(inputStream)) {
-
-            Sheet sheet = workbook.getSheetAt(0);
-            boolean isFirstRow = true;
-
-            for (Row row : sheet) {
-                if (isFirstRow) {
-                    isFirstRow = false;
-                    continue;
-                }
-
-                List<PublicOffice> publicOffices = extractPublicOffices(row);
-                FilteringDetails filteringDetails = createFilteringDetails(row);
-                Policy policy = createPolicy(row, publicOffices, filteringDetails);
-
-                for (PublicOffice publicOffice : publicOffices) {
-                    publicOffice.getPolicies().add(policy);
-                }
-
-                policyList.add(policy);
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (!policyList.isEmpty()) {
-                policyRepository.saveAll(policyList);
-            }
-        }
-    }
+//    @Transactional
+//    public void loadDataFromCSV(MultipartFile file) {
+//        List<Policy> policyList = new ArrayList<>();
+//
+//        try (InputStream inputStream = file.getInputStream();
+//             Workbook workbook = WorkbookFactory.create(inputStream)) {
+//
+//            Sheet sheet = workbook.getSheetAt(0);
+//            boolean isFirstRow = true;
+//
+//            for (Row row : sheet) {
+//                if (isFirstRow) {
+//                    isFirstRow = false;
+//                    continue;
+//                }
+//
+//                List<PublicOffice> publicOffices = extractPublicOffices(row);
+//                FilteringDetails filteringDetails = createFilteringDetails(row);
+//                Policy policy = createPolicy(row, publicOffices, filteringDetails);
+//
+//                for (PublicOffice publicOffice : publicOffices) {
+//                    publicOffice.getPolicies().add(policy);
+//                }
+//
+//                policyList.add(policy);
+//            }
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } finally {
+//            if (!policyList.isEmpty()) {
+//                policyRepository.saveAll(policyList);
+//            }
+//        }
+//    }
 
     private List<PublicOffice> extractPublicOffices(Row row) {
         List<PublicOffice> publicOffices = new ArrayList<>();
@@ -87,14 +84,14 @@ public class CsvService {
                 : getCellValue(row, 27);
     }
 
-    private FilteringDetails createFilteringDetails(Row row) {
-        return FilteringDetails.builder()
-                .ageInfo(getCellValue(row, 11))
-                .employmentStatus(getCellValue(row, 13))
-                .specializationField(getCellValue(row, 14))
-                .educationRequirement(getCellValue(row, 15))
-                .build();
-    }
+//    private FilteringDetails createFilteringDetails(Row row) {
+//        return FilteringDetails.builder()
+//                .ageInfo(getCellValue(row, 11))
+//                .employmentStatus(getCellValue(row, 13))
+//                .specializationField(getCellValue(row, 14))
+//                .educationRequirement(getCellValue(row, 15))
+//                .build();
+//    }
 
     private Policy createPolicy(Row row, List<PublicOffice> publicOffices, FilteringDetails filteringDetails) {
         return Policy.builder()
