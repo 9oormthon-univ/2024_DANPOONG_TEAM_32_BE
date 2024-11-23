@@ -1,6 +1,7 @@
 package com.danpoong.onchung.domain.policy.controller;
 
 import com.danpoong.onchung.domain.policy.dto.PolicyResponseDto;
+import com.danpoong.onchung.domain.policy.dto.RecommendResponseDto;
 import com.danpoong.onchung.domain.policy.service.PolicyService;
 import com.danpoong.onchung.global.template.ResponseTemplate;
 import io.swagger.v3.oas.annotations.Operation;
@@ -8,10 +9,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,6 +23,12 @@ public class PolicyController {
     @GetMapping("/{policy_id}")
     public ResponseTemplate<PolicyResponseDto> getPolicy(@PathVariable("policy_id") Long policyId, HttpServletRequest request, HttpServletResponse response) {
         return new ResponseTemplate<>(HttpStatus.OK, "정책 단일 조회 성공", policyService.getPolicy(policyId, request, response));
+    }
+
+    @Operation(summary = "정책 추천")
+    @GetMapping("/recommend")
+    public ResponseTemplate<List<RecommendResponseDto>> recommend(@RequestParam int cardNum) {
+        return new ResponseTemplate<>(HttpStatus.OK, "정책 추천 성공", policyService.recommendPolicy(cardNum));
     }
 
 //    @Operation(summary = "정책 즐겨찾기", description = "정책이 존재하면 삭제, 아니라면 추가")
