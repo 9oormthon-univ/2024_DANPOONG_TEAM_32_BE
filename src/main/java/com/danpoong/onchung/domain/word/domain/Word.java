@@ -5,10 +5,12 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @Table(name = "word")
 public class Word {
@@ -34,12 +36,11 @@ public class Word {
     private String relatedWelfare;
 
     @Builder
-    public Word(WordCategory category, String term, String description, String example, String relatedWelfare) {
-        this.category = category;
+    public Word(String category, String term, String description, String example, String relatedWelfare) {
+        this.category = WordCategory.checkCategory(category);
         this.term = term;
         this.description = description;
         this.example = example;
         this.relatedWelfare = relatedWelfare;
-
     }
 }

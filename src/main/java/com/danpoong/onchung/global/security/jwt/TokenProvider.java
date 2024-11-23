@@ -31,8 +31,8 @@ public class TokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public TokenDto generateToken(Authentication authentication) {
-        String accessToken = generateAccessToken(authentication.getName());
+    public TokenDto generateToken(Long userId) {
+        String accessToken = generateAccessToken(userId);
         String refreshToken = generateRefreshToken();
 
         return TokenDto.builder()
@@ -42,7 +42,7 @@ public class TokenProvider {
     }
 
     //Access Token 생성
-    public String generateAccessToken(String userId) {
+    public String generateAccessToken(Long userId) {
         Date now = new Date();
         Date accessExpiryDate = new Date(now.getTime() + Long.parseLong(accessTokenExpireTime));
 
@@ -64,7 +64,7 @@ public class TokenProvider {
                 .compact();
     }
 
-    public TokenDto reissueToken(String userId) {
+    public TokenDto reissueToken(Long userId) {
         String newAccessToken = generateAccessToken(userId);
         String newRefreshToken = generateRefreshToken();
 

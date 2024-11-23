@@ -14,18 +14,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
     private final TokenProvider tokenProvider;
     private final TokenRepository tokenRepository;
     private final UserRepository userRepository;
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     @Transactional
     public LoginResponseDto login(Long userId, HttpServletRequest req, HttpServletResponse resp) {
@@ -33,7 +31,7 @@ public class AuthService {
                 .orElseGet(() -> userRepository.findByToken(Token.builder().refreshToken(TokenUtil.getRefreshToken(req)).build())
                         .orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다.")));
 
-        TokenDto tokenGenerateDto = generateToken(userInfo.getUserName(), userInfo.getUserLoginId());
+        TokenDto tokenGenerateDto = tokenProvider.generateToken(userId);
 
         userInfo.getToken().updateToken(tokenGenerateDto.refreshToken());
         tokenRepository.save(userInfo.getToken());
@@ -51,17 +49,15 @@ public class AuthService {
             throw new RuntimeException("해당 아이디를 사용하는 사용자가 존재합니다.");
         }
 
-        TokenDto tokenGenerateDto = generateToken(sign.username(), sign.userLoginId());
-
         UserInfo userInfo = UserInfo.builder()
                 .userName(sign.username())
                 .userLoginId(sign.userLoginId())
-                .token(
-                        Token.builder().refreshToken(tokenGenerateDto.refreshToken()).build()
-                )
                 .build();
+        UserInfo test = userRepository.save(userInfo);
+        log.info(test.toString());
 
-        userRepository.save(userInfo);
+        TokenDto tokenGenerateDto = tokenProvider.generateToken(userInfo.getId());
+        userInfo.updateToken(new Token(tokenGenerateDto.refreshToken()));
 
         TokenUtil.saveRefreshToken(response, tokenGenerateDto.refreshToken());
 
@@ -85,7 +81,7 @@ public class AuthService {
             throw new RuntimeException("저장된 Refresh Token이 일치하지 않습니다.");
         }
 
-        TokenDto tokenGenerateDto = tokenProvider.reissueToken(userInfo.getId().toString());
+        TokenDto tokenGenerateDto = tokenProvider.reissueToken(userInfo.getId());
 
         TokenUtil.updateRefreshTokenCookie(req, res, token.refreshToken());
 
@@ -95,12 +91,5 @@ public class AuthService {
 
     private boolean checkPresentLoginId(String loginId) {
         return userRepository.findByUserLoginId(loginId).isPresent();
-    }
-
-    private TokenDto generateToken(String username, String userLoginId) {
-        Authentication authentication = authenticationManagerBuilder.getObject()
-                .authenticate(new UsernamePasswordAuthenticationToken(username, userLoginId));
-
-        return tokenProvider.generateToken(authentication);
     }
 }
