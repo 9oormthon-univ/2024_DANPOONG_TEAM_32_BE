@@ -34,13 +34,13 @@ public class AuthService {
         UserInfo userInfo = findOrCreateUser(kakaoUserInfo);
 
         TokenDto tokenDto = tokenProvider.generateToken(userInfo.getId());
-        userInfo.updateRefreshToken(tokenDto.refreshToken());
-        TokenUtil.saveRefreshToken(response, tokenDto.refreshToken());
+        userInfo.updateRefreshToken(tokenDto.getRefreshToken());
+        TokenUtil.saveRefreshToken(response, tokenDto.getRefreshToken());
 
         return LoginResponseDto.builder()
                 .isNewUser(userInfo.getBirthDate() == null)
                 .username(userInfo.getNickname())
-                .accessToken(tokenDto.accessToken())
+                .accessToken(tokenDto.getAccessToken())
                 .build();
     }
 
@@ -58,11 +58,11 @@ public class AuthService {
             throw new RefreshTokenMismatchException("Refresh Token = " + refreshToken);
         }
 
-        TokenDto tokenDto = tokenProvider.reissueToken(userInfo.getId());
-        userInfo.updateRefreshToken(tokenDto.refreshToken());
+        TokenDto tokenDto = tokenProvider.reissue(userInfo.getId());
+        userInfo.updateRefreshToken(tokenDto.getRefreshToken());
         TokenUtil.updateRefreshTokenCookie(request, response, refreshToken);
 
-        return ReissueResponseDto.builder().accessToken(tokenDto.accessToken()).build();
+        return ReissueResponseDto.builder().accessToken(tokenDto.getAccessToken()).build();
     }
 
     private UserInfo findOrCreateUser(KakaoUserInfo kakaoUserInfo) {
@@ -73,7 +73,7 @@ public class AuthService {
     private UserInfo createNewUser(KakaoUserInfo kakaoUserInfo) {
         UserInfo userInfo = UserInfo.builder()
                 .email(kakaoUserInfo.getEmail())
-                .nickname(kakaoUserInfo.getNickname())
+                .nickname(kakaoUserInfo.getName())
                 .build();
 
         return userInfoRepository.save(userInfo);

@@ -1,6 +1,8 @@
 package com.danpoong.onchung.global.config;
 
-import com.danpoong.onchung.global.security.jwt.filter.JwtAuthenticationFilter;
+import com.danpoong.onchung.global.security.jwt.TokenProvider;
+import com.danpoong.onchung.global.security.jwt.filter.JwtAuthorizationFilter;
+import com.danpoong.onchung.global.security.jwt.filter.JwtExceptionFilter;
 import com.danpoong.onchung.global.security.jwt.filter.handler.JwtAccessDeniedHandler;
 import com.danpoong.onchung.global.security.jwt.filter.handler.JwtAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
@@ -11,11 +13,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -23,16 +22,11 @@ import org.springframework.web.cors.CorsConfigurationSource;
 public class SecurityConfig {
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final TokenProvider tokenProvider;
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource) throws Exception {
-        return http
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
@@ -43,8 +37,10 @@ public class SecurityConfig {
                             .accessDeniedHandler(jwtAccessDeniedHandler);
                 })
                 .authorizeHttpRequests((authorizeRequests) -> authorizeRequests.anyRequest().authenticated())
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
+                .addFilterBefore(new JwtAuthorizationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtExceptionFilter(), JwtAuthorizationFilter.class);
+
+        return http.build();
     }
 
     @Bean
