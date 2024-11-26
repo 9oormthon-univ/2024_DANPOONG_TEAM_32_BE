@@ -39,6 +39,7 @@ public class AuthService {
 
         return LoginResponseDto.builder()
                 .isNewUser(userInfo.getBirthDate() == null)
+                .username(userInfo.getNickname())
                 .accessToken(tokenDto.accessToken())
                 .build();
     }
