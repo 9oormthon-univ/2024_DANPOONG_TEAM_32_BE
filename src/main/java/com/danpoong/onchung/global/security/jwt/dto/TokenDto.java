@@ -1,10 +1,20 @@
 package com.danpoong.onchung.global.security.jwt.dto;
 
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Builder
-public record TokenDto(
-        String accessToken,
-        String refreshToken
-) {
+@Getter
+@NoArgsConstructor
+public class TokenDto {
+    private String grantType;
+    private String accessToken;
+    private String refreshToken;
+
+    @Builder
+    public TokenDto(String grantType, String accessToken, String refreshToken) {
+        this.grantType = grantType;
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
+    }
 }

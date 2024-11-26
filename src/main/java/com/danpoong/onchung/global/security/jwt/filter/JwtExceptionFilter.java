@@ -15,6 +15,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
+/*
+요청 -> JwtExceptionFilter -> JwtAuthenticationFilter로 필터를 구성해서 JwtAuthenticationFilter에서 던진 예외를 JwtExceptionFilter에서 처리
+ */
+
 @Component
 public class JwtExceptionFilter extends OncePerRequestFilter {
     @Override

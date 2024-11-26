@@ -11,16 +11,20 @@ public class KakaoUserInfo {
     private KakaoAccount kakaoAccount;
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    record KakaoAccount(String email, Profile profile) {}
+    record KakaoAccount(String email, String name) {}
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    record Profile(String nickname) {}
+//    @JsonIgnoreProperties(ignoreUnknown = true)
+//    record Profile(String nickname) {}
 
     public String getEmail() {
         return kakaoAccount.email;
     }
 
-    public String getNickname() {
-        return kakaoAccount.profile.nickname;
+    public String getName() {
+        return kakaoAccount.name;
     }
+
+//    public String getNickname() {
+//        return kakaoAccount.profile.nickname;
+//    }
 }
