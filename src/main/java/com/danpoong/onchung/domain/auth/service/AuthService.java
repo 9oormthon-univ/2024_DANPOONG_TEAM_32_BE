@@ -37,6 +37,8 @@ public class AuthService {
         userInfo.updateRefreshToken(tokenDto.getRefreshToken());
         TokenUtil.saveRefreshToken(response, tokenDto.getRefreshToken());
 
+        log.info(params.getAuthorizationCode());
+
         return LoginResponseDto.builder()
                 .isNewUser(userInfo.getBirthDate() == null)
                 .username(userInfo.getNickname())
