@@ -6,9 +6,9 @@ import com.danpoong.onchung.global.security.jwt.filter.handler.JwtAuthentication
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -37,22 +37,19 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //세션 사용 안 함
-
                 .exceptionHandling(exceptionHandling -> {
                     exceptionHandling
                             .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                             .accessDeniedHandler(jwtAccessDeniedHandler);
                 })
-
-                .authorizeHttpRequests((authorizeRequests) ->
-                        authorizeRequests
-                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                                .requestMatchers("/api/auth/**", "/swagger-ui/**", "/api-docs/**").permitAll()
-                                .anyRequest().authenticated()
-                )
-
+                .authorizeHttpRequests((authorizeRequests) -> authorizeRequests.anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-
                 .build();
+    }
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return webSecurity -> webSecurity.ignoring()
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api/auth/**");
     }
 }
