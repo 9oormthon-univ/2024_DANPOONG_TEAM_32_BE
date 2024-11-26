@@ -9,8 +9,8 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:5173", "http://www.youthmap.site:8080", "http://youthmap.site:8080", "http://localhost:8080", "http://3.36.205.191", "https://400cc.araas.ai", "http://400cc.araas.ai")
-                .allowedMethods("GET", "POST", "PATCH", "DELETE")
+                .allowedOrigins("http://localhost:5173", "http://localhost:8080", "https://youthmap.site", "https://api.youthmap.site")
+                .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE")
                 .allowCredentials(true)
                 .maxAge(3600);
     }
