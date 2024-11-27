@@ -72,4 +72,8 @@ public class UserInfo {
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
 }

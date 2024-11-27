@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -31,5 +32,12 @@ public class AuthController {
     @PostMapping("/reissue")
     public ResponseTemplate<ReissueResponseDto> reissue(HttpServletRequest request, HttpServletResponse response) {
         return new ResponseTemplate<>(HttpStatus.OK, "엑세스 토큰 재발급", authService.reissueToken(request, response));
+    }
+
+    @Operation(summary = "사용자 닉네임 변경")
+    @PatchMapping("/nickname")
+    public ResponseTemplate<?> updateNickname(@AuthenticationPrincipal Long userId, @RequestParam String nickname) {
+        authService.updateNickname(userId, nickname);
+        return new ResponseTemplate<>(HttpStatus.OK, "사용자 닉네임 변경 성공");
     }
 }

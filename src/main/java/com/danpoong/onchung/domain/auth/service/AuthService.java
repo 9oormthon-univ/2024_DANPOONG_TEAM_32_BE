@@ -4,7 +4,9 @@ import com.danpoong.onchung.domain.auth.dto.LoginResponseDto;
 import com.danpoong.onchung.domain.auth.dto.ReissueResponseDto;
 import com.danpoong.onchung.domain.auth.exception.RefreshTokenMismatchException;
 import com.danpoong.onchung.domain.user.domain.UserInfo;
+import com.danpoong.onchung.domain.user.exception.UserNotFoundException;
 import com.danpoong.onchung.domain.user.repository.UserInfoRepository;
+import com.danpoong.onchung.global.RandomNicknameGenerate;
 import com.danpoong.onchung.global.security.jwt.TokenProvider;
 import com.danpoong.onchung.global.security.jwt.TokenUtil;
 import com.danpoong.onchung.global.security.jwt.dto.TokenDto;
@@ -27,12 +29,12 @@ public class AuthService {
     private final UserInfoRepository userInfoRepository;
     private final TokenProvider tokenProvider;
     private final KakaoApiClient kakaoApiClient;
+    private final RandomNicknameGenerate randomNicknameGenerate;
 
     @Transactional
     public LoginResponseDto login(HttpServletResponse response, KakaoLoginParam params) throws JsonProcessingException {
         String kakaoAccessToken = kakaoApiClient.requestAccessToken(params);
         KakaoUserInfo kakaoUserInfo = kakaoApiClient.requestOAuthInfo(kakaoAccessToken);
-        log.info(kakaoUserInfo.toString());
 
         UserInfo userInfo = findOrCreateUser(kakaoUserInfo);
 
@@ -70,6 +72,14 @@ public class AuthService {
         return ReissueResponseDto.builder().accessToken(tokenDto.getAccessToken()).build();
     }
 
+    public void updateNickname(Long userId, String nickname) {
+        UserInfo userInfo = userInfoRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("해당 ID의 사용자가 존재하지 않습니다."));
+
+        if (!userInfo.getNickname().equals(nickname)) {
+            userInfo.updateNickname(nickname);
+        }
+    }
+
     private UserInfo findOrCreateUser(KakaoUserInfo kakaoUserInfo) {
         return userInfoRepository.findByEmail(kakaoUserInfo.getEmail())
                 .orElseGet(() -> createNewUser(kakaoUserInfo));
@@ -78,7 +88,7 @@ public class AuthService {
     private UserInfo createNewUser(KakaoUserInfo kakaoUserInfo) {
         UserInfo userInfo = UserInfo.builder()
                 .email(kakaoUserInfo.getEmail())
-                .nickname(kakaoUserInfo.getNickname())
+                .nickname(randomNicknameGenerate.generateNickname())
                 .build();
 
         return userInfoRepository.save(userInfo);
