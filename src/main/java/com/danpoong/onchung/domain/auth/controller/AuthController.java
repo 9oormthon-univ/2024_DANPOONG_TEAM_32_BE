@@ -5,6 +5,7 @@ import com.danpoong.onchung.domain.auth.dto.ReissueResponseDto;
 import com.danpoong.onchung.domain.auth.service.AuthService;
 import com.danpoong.onchung.global.security.oauth.kakao.KakaoLoginParam;
 import com.danpoong.onchung.global.template.ResponseTemplate;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,7 +23,7 @@ public class AuthController {
 
     @Operation(summary = "카카오 로그인")
     @PostMapping("/login")
-    public ResponseTemplate<LoginResponseDto> kakaoLogin(HttpServletResponse response, @RequestBody KakaoLoginParam kakaoLoginParam) {
+    public ResponseTemplate<LoginResponseDto> kakaoLogin(HttpServletResponse response, @RequestBody KakaoLoginParam kakaoLoginParam) throws JsonProcessingException {
         return new ResponseTemplate<>(HttpStatus.OK, "카카오 로그인 성공", authService.login(response, kakaoLoginParam));
     }
 
