@@ -11,6 +11,7 @@ import com.danpoong.onchung.global.security.jwt.dto.TokenDto;
 import com.danpoong.onchung.global.security.oauth.kakao.KakaoApiClient;
 import com.danpoong.onchung.global.security.oauth.kakao.KakaoLoginParam;
 import com.danpoong.onchung.global.security.oauth.kakao.KakaoUserInfo;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -28,9 +29,11 @@ public class AuthService {
     private final KakaoApiClient kakaoApiClient;
 
     @Transactional
-    public LoginResponseDto login(HttpServletResponse response, KakaoLoginParam params) {
+    public LoginResponseDto login(HttpServletResponse response, KakaoLoginParam params) throws JsonProcessingException {
         String kakaoAccessToken = kakaoApiClient.requestAccessToken(params);
         KakaoUserInfo kakaoUserInfo = kakaoApiClient.requestOAuthInfo(kakaoAccessToken);
+        log.info(kakaoUserInfo.toString());
+
         UserInfo userInfo = findOrCreateUser(kakaoUserInfo);
 
         TokenDto tokenDto = tokenProvider.generateToken(userInfo.getId());
@@ -75,7 +78,7 @@ public class AuthService {
     private UserInfo createNewUser(KakaoUserInfo kakaoUserInfo) {
         UserInfo userInfo = UserInfo.builder()
                 .email(kakaoUserInfo.getEmail())
-                .nickname(kakaoUserInfo.getName())
+                .nickname(kakaoUserInfo.getNickname())
                 .build();
 
         return userInfoRepository.save(userInfo);
