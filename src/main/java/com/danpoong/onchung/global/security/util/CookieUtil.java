@@ -20,7 +20,6 @@ public class CookieUtil {
         cookie.setMaxAge(expireSeconds);
         cookie.setSecure(true);
         cookie.setHttpOnly(true);
-        cookie.setDomain(".youthmap.site");
         response.addCookie(cookie);
     }
 
