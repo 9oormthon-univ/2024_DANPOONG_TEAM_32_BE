@@ -69,6 +69,7 @@ public class SecurityConfig {
                 "http://localhost:8080",
                 "http://localhost:3000",
                 "https://youthmap.site",
+                "https://www.youthmap.site",
                 "https://api.youthmap.site"
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
