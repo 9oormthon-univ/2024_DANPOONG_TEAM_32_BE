@@ -52,6 +52,17 @@ public class UserInfo {
     )
     private List<Policy> favoritePolicies = new ArrayList<>();
 
+    public void addFavoriteWord(Word word) {
+        if (!favoriteWords.contains(word)) {
+            favoriteWords.add(word);
+        }
+    }
+
+    public void removeFavoriteWord(Word word) {
+        favoriteWords.remove(word);
+    }
+
+
     @ManyToMany
     @JoinTable(
             name = "user_favorite_word",
