@@ -39,7 +39,7 @@ public class WordService {
 
             if (id != null) {
                 UserInfo userInfo = userInfoRepository.findById(id)
-                        .orElseThrow(() -> new UserNotFoundException("해당 ID의 사용자가 존재하지 않습니다.");
+                        .orElseThrow(() -> new UserNotFoundException("해당 ID의 사용자가 존재하지 않습니다."));
 
                 isBookmarked = userInfo.getFavoriteWords().contains(word);
             }
