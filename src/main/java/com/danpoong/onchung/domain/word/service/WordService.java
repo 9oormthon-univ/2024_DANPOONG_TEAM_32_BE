@@ -1,6 +1,7 @@
 package com.danpoong.onchung.domain.word.service;
 
 import com.danpoong.onchung.domain.user.domain.UserInfo;
+import com.danpoong.onchung.domain.user.exception.UserNotFoundException;
 import com.danpoong.onchung.domain.user.repository.UserInfoRepository;
 import com.danpoong.onchung.domain.word.domain.Word;
 import com.danpoong.onchung.domain.word.domain.enums.WordCategory;
@@ -38,7 +39,7 @@ public class WordService {
 
             if (id != null) {
                 UserInfo userInfo = userInfoRepository.findById(id)
-                        .orElseThrow(() -> new RuntimeException("해당 ID의 사용자가 존재하지 않습니다."));
+                        .orElseThrow(() -> new UserNotFoundException("해당 ID의 사용자가 존재하지 않습니다.");
 
                 isBookmarked = userInfo.getFavoriteWords().contains(word);
             }
@@ -53,7 +54,7 @@ public class WordService {
     }
 
     public WordResponseDto getWord(Long wordId) {
-        Word word = wordRepository.findById(wordId).orElseThrow(() -> new RuntimeException("해당 ID의 단어가 존재하지 않습니다."));
+        Word word = wordRepository.findById(wordId).orElseThrow(() -> new UserNotFoundException("해당 ID의 단어가 존재하지 않습니다."));
 
         return WordResponseDto.builder()
                 .term(word.getTerm())
@@ -66,7 +67,7 @@ public class WordService {
 
     @Transactional
     public void favoriteWord(Long id, Long wordId) {
-        UserInfo userInfo = userInfoRepository.findById(id).orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
+        UserInfo userInfo = userInfoRepository.findById(id).orElseThrow(() -> new UserNotFoundException("사용자가 존재하지 않습니다."));
         Word word = wordRepository.findById(wordId).orElseThrow(() -> new RuntimeException("해당 ID의 단어가 존재하지 않습니다."));
 
         boolean isPresent = userInfo.getFavoriteWords().contains(word);
@@ -79,7 +80,7 @@ public class WordService {
     }
 
     public Page<WordSummaryResponseDto> getBookmarkedWords(Long id, int page) {
-        UserInfo userInfo = userInfoRepository.findById(id).orElseThrow(() -> new RuntimeException("해당 ID의 사용자가 존재하지 않습니다."));
+        UserInfo userInfo = userInfoRepository.findById(id).orElseThrow(() -> new UserNotFoundException("해당 ID의 사용자가 존재하지 않습니다."));
         List<Word> wordList = userInfo.getFavoriteWords();
 
         int totalWords = wordList.size();
@@ -100,7 +101,7 @@ public class WordService {
 
     public WordSummaryResponseDto searchWord(String type, String term, Long id) {
         UserInfo userInfo = userInfoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("해당 ID의 사용자가 존재하지 않습니다."));
+                .orElseThrow(() -> new UserNotFoundException("해당 ID의 사용자가 존재하지 않습니다."));
 
         Word word = wordRepository.findByTerm(term).orElse(null);
         if (word == null) {
@@ -123,10 +124,8 @@ public class WordService {
 
     // 북마크 내 검색
     private WordSummaryResponseDto searchBookmark(UserInfo userInfo, Word word) {
-        for (Word favoriteWord : userInfo.getFavoriteWords()) {
-            if (favoriteWord.getTerm().equals(word.getTerm())) {
-                return createWordSummaryResponse(favoriteWord, true);
-            }
+        if (userInfo.getFavoriteWords().contains(word)) {
+            return createWordSummaryResponse(word, true);
         }
         return WordSummaryResponseDto.empty();
     }
@@ -134,8 +133,9 @@ public class WordService {
     // 전체 검색
     private WordSummaryResponseDto searchAll(Word word, UserInfo userInfo) {
         boolean isBookmark = userInfo.getFavoriteWords().contains(word);
-        return createWordSummaryResponse(word, false);
+        return createWordSummaryResponse(word, isBookmark);
     }
+
 
     // 카테고리 내 검색
     private WordSummaryResponseDto searchByCategory(String type, Word word, UserInfo userInfo) {
