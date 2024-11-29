@@ -42,7 +42,7 @@ public class UserInfo {
             joinColumns = @JoinColumn(name = "user_info_id")
     )
     @Column(name = "welfare_card")
-    private List<WelfareCard> welfareCard = new ArrayList<>();
+    private List<WelfareCard> welfareCard;
 
     @ManyToMany
     @JoinTable(
@@ -50,7 +50,26 @@ public class UserInfo {
             joinColumns = @JoinColumn(name = "user_info_id"),
             inverseJoinColumns = @JoinColumn(name = "policy_id")
     )
-    private List<Policy> favoritePolicies = new ArrayList<>();
+    private List<Policy> favoritePolicies;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_favorite_word",
+            joinColumns = @JoinColumn(name = "user_info_id"),
+            inverseJoinColumns = @JoinColumn(name = "word_id")
+    )
+    private List<Word> favoriteWords;
+
+    @Column(name = "refresh_token")
+    private String refreshToken;
+
+    @Builder
+    public UserInfo(String email, String nickname) {
+        this.email = email;
+        this.nickname = nickname;
+        favoritePolicies = new ArrayList<>();
+        favoriteWords = new ArrayList<>();
+    }
 
     public void addFavoriteWord(Word word) {
         if (!favoriteWords.contains(word)) {
@@ -62,23 +81,6 @@ public class UserInfo {
         favoriteWords.remove(word);
     }
 
-
-    @ManyToMany
-    @JoinTable(
-            name = "user_favorite_word",
-            joinColumns = @JoinColumn(name = "user_info_id"),
-            inverseJoinColumns = @JoinColumn(name = "word_id")
-    )
-    private List<Word> favoriteWords = new ArrayList<>();
-
-    @Column(name = "refresh_token")
-    private String refreshToken;
-
-    @Builder
-    public UserInfo(String email, String nickname) {
-        this.email = email;
-        this.nickname = nickname;
-    }
 
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;

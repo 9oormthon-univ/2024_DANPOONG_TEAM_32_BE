@@ -10,8 +10,8 @@ import com.danpoong.onchung.domain.word.dto.WordSummaryResponseDto;
 import com.danpoong.onchung.domain.word.repository.WordRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,12 +44,7 @@ public class WordService {
                 isBookmarked = userInfo.getFavoriteWords().contains(word);
             }
 
-            return WordSummaryResponseDto.builder()
-                    .wordId(word.getId())
-                    .term(word.getTerm())
-                    .isBookmark(isBookmarked)
-                    .relatedWelfare(word.getRelatedWelfare())
-                    .build();
+            return createWordSummaryResponse(word, isBookmarked);
         });
     }
 
@@ -79,24 +74,12 @@ public class WordService {
         }
     }
 
-    public Page<WordSummaryResponseDto> getBookmarkedWords(Long id, int page) {
-        UserInfo userInfo = userInfoRepository.findById(id).orElseThrow(() -> new UserNotFoundException("해당 ID의 사용자가 존재하지 않습니다."));
-        List<Word> wordList = userInfo.getFavoriteWords();
+    public Page<WordSummaryResponseDto> getBookmarkedWords(Long userId, int page) {
+        Pageable pageable = PageRequest.of(page, WORD_PAGE_SIZE);
 
-        int totalWords = wordList.size();
-        int start = Math.min(page * WORD_PAGE_SIZE, totalWords);
-        int end = Math.min((page + 1) * WORD_PAGE_SIZE, totalWords);
+        Page<Word> wordsPage = userInfoRepository.findFavoriteWordsByUserId(userId, pageable);
 
-        List<Word> pagedWords = wordList.subList(start, end);
-        Page<Word> pageResult = new PageImpl<>(pagedWords, PageRequest.of(page, WORD_PAGE_SIZE), totalWords);
-
-        return pageResult.map(word -> WordSummaryResponseDto.builder()
-                .wordId(word.getId())
-                .term(word.getTerm())
-                .isBookmark(true)
-                .relatedWelfare(word.getRelatedWelfare())
-                .build()
-        );
+        return wordsPage.map(word -> createWordSummaryResponse(word, true));
     }
 
     public WordSummaryResponseDto searchWord(String type, String term, Long id) {

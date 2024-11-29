@@ -19,9 +19,10 @@ public interface WordRepository extends JpaRepository<Word, Long> {
     Optional<Word> findByTerm(String term);
 
     @Query("SELECT w FROM Word w " +
-            "LEFT JOIN UserInfo u ON :userId MEMBER OF u.favoriteWords " +
+            "LEFT JOIN UserInfo u ON u.id = :userId " +
+            "LEFT JOIN u.favoriteWords fw ON fw = w " +
             "WHERE w.category = :category " +
-            "ORDER BY CASE WHEN w MEMBER OF u.favoriteWords THEN 0 ELSE 1 END, w.id")
+            "ORDER BY CASE WHEN fw IS NOT NULL THEN 0 ELSE 1 END, w.id")
     Page<Word> findWordsByCategoryWithBookmarkFirst(@Param("category") WordCategory category,
                                                     @Param("userId") Long userId,
                                                     Pageable pageable);
