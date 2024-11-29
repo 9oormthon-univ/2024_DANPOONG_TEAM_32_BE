@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class WordController {
     private final WordService wordService;
 
-    @Operation(summary = "카테고리 별 단어 조회", description = "한 페이지의 데이터 개수 설정 가능")
+    @Operation(summary = "카테고리 별 단어 조회", description = "한 페이지의 데이터 개수 설정 가능, 페이지 번호는 0번부터 시작")
     @GetMapping("/category/{page_num}")
     public ResponseTemplate<Page<WordSummaryResponseDto>> getWords(
             @AuthenticationPrincipal Long userId,
@@ -45,7 +45,7 @@ public class WordController {
         return new ResponseTemplate<>(HttpStatus.OK, "북마크 추가 / 삭제 성공");
     }
 
-    @Operation(summary = "단어 북마크 조회")
+    @Operation(summary = "단어 북마크 조회", description = "유저의 북마크를 조회, 페이지 번호는 0번부터 시작")
     @GetMapping("/book-mark/{page_num}")
     public ResponseTemplate<Page<WordSummaryResponseDto>> getBookmarks(
             @AuthenticationPrincipal Long userId,
