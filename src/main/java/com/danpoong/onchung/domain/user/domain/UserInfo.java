@@ -1,7 +1,7 @@
 package com.danpoong.onchung.domain.user.domain;
 
 import com.danpoong.onchung.domain.policy.domain.Policy;
-import com.danpoong.onchung.domain.welfare_card.domain.enums.WelfareCard;
+import com.danpoong.onchung.domain.policy.domain.enums.PolicyPath;
 import com.danpoong.onchung.domain.word.domain.Word;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,11 +39,11 @@ public class UserInfo {
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(
-            name = "user_welfare_card",
+            name = "user_policy_path",
             joinColumns = @JoinColumn(name = "user_info_id")
     )
-    @Column(name = "welfare_card")
-    private List<WelfareCard> welfareCard;
+    @Column(name = "policy_path")
+    private List<PolicyPath> policyPaths;
 
     @ManyToMany
     @JoinTable(
@@ -81,6 +82,9 @@ public class UserInfo {
         favoriteWords.remove(word);
     }
 
+    public void addPolicyPath(PolicyPath policyPath) {
+        this.policyPaths.add(policyPath);
+    }
 
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
@@ -88,5 +92,10 @@ public class UserInfo {
 
     public void updateNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public void updateBirthDate(String birthDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy MM dd");
+        this.birthDate = LocalDate.parse(birthDate, formatter);
     }
 }

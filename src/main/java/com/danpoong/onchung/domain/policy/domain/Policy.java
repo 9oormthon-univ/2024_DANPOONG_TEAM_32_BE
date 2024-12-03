@@ -1,6 +1,7 @@
 package com.danpoong.onchung.domain.policy.domain;
 
 import com.danpoong.onchung.domain.policy.domain.enums.PolicyCategory;
+import com.danpoong.onchung.domain.policy.domain.enums.PolicyCategoryConverter;
 import com.danpoong.onchung.domain.public_office.domain.PublicOffice;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -46,7 +47,7 @@ public class Policy {
     @Embedded
     private FilteringDetails filteringDetails;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = PolicyCategoryConverter.class)
     private PolicyCategory category;
 
     @ManyToMany
