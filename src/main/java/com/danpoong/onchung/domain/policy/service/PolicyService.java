@@ -69,6 +69,11 @@ public class PolicyService {
                 .build();
     }
 
+    public List<PolicyPath> getPolicyPaths(Long userId) {
+        UserInfo userInfo = userInfoRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("해당 ID의 유저 정보를 찾을 수 없습니다."));
+        return userInfo.getPolicyPaths();
+    }
+
     private PolicyPath determinePolicyPath(PolicyPathRequestDto requestDto) {
         String interestTopic = requestDto.interestTopic();
         String educationStatus = requestDto.educationStatus();
