@@ -62,16 +62,19 @@ public class PolicyService {
 
         PolicyPath tempPolicyPath = determinePolicyPath(requestDto);
 
-        userInfo.addPolicyPath(tempPolicyPath);
+        if (!userInfo.getPolicyPaths().contains(tempPolicyPath)) {
+            userInfo.addPolicyPath(tempPolicyPath);
+        }
 
         return PolicyPathResponseDto.builder()
                 .policyPathNum(tempPolicyPath.getNumber())
                 .build();
     }
 
-    public List<PolicyPath> getPolicyPaths(Long userId) {
+    public List<Integer> getPolicyPaths(Long userId) {
         UserInfo userInfo = userInfoRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("해당 ID의 유저 정보를 찾을 수 없습니다."));
-        return userInfo.getPolicyPaths();
+
+        return userInfo.getPolicyPaths().stream().map(PolicyPath::getNumber).toList();
     }
 
     private PolicyPath determinePolicyPath(PolicyPathRequestDto requestDto) {
