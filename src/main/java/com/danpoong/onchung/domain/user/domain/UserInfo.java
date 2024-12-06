@@ -70,6 +70,7 @@ public class UserInfo {
         this.nickname = nickname;
         favoritePolicies = new ArrayList<>();
         favoriteWords = new ArrayList<>();
+        policyPaths = new ArrayList<>();
     }
 
     public void addFavoriteWord(Word word) {
@@ -83,7 +84,9 @@ public class UserInfo {
     }
 
     public void addPolicyPath(PolicyPath policyPath) {
-        this.policyPaths.add(policyPath);
+        if (!policyPaths.contains(policyPath)) {
+            policyPaths.add(policyPath);
+        }
     }
 
     public void updateRefreshToken(String refreshToken) {

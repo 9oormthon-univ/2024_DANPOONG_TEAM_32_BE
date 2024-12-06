@@ -55,6 +55,7 @@ public class PolicyService {
                 .build();
     }
 
+    @Transactional
     public PolicyPathResponseDto makePolicyPath(Long userId, PolicyPathRequestDto requestDto) {
         UserInfo userInfo = userInfoRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("해당 ID의 유저 정보를 찾을 수 없습니다."));
@@ -62,9 +63,7 @@ public class PolicyService {
 
         PolicyPath tempPolicyPath = determinePolicyPath(requestDto);
 
-        if (!userInfo.getPolicyPaths().contains(tempPolicyPath)) {
-            userInfo.addPolicyPath(tempPolicyPath);
-        }
+        userInfo.addPolicyPath(tempPolicyPath);
 
         return PolicyPathResponseDto.builder()
                 .policyPathNum(tempPolicyPath.getNumber())
