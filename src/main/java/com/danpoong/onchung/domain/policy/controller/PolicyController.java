@@ -1,6 +1,5 @@
 package com.danpoong.onchung.domain.policy.controller;
 
-import com.danpoong.onchung.domain.policy.domain.enums.PolicyPath;
 import com.danpoong.onchung.domain.policy.dto.PolicyPathRequestDto;
 import com.danpoong.onchung.domain.policy.dto.PolicyPathResponseDto;
 import com.danpoong.onchung.domain.policy.dto.PolicyResponseDto;
@@ -40,7 +39,7 @@ public class PolicyController {
 
     @Operation(summary = "발급 받은 복지패스 조회")
     @GetMapping("/path")
-    public ResponseTemplate<List<PolicyPath>> getPolicyPath(@AuthenticationPrincipal Long userId) {
+    public ResponseTemplate<List<Integer>> getPolicyPath(@AuthenticationPrincipal Long userId) {
         return new ResponseTemplate<>(HttpStatus.OK, "발급한 복지패스 조회 성공", policyService.getPolicyPaths(userId));
     }
 
